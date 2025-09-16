@@ -1,8 +1,8 @@
 namespace WebsiteQLNhaTro.Models
 {
-    public class User
+    public class UserDetailDTO
     {
         public string Username { get; set; }
-        // Thêm các thuộc tính khác nếu cần
+        public string Role { get; set; }
     }
 }

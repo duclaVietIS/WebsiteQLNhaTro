@@ -12,14 +12,14 @@ namespace WebsiteQLNhaTro.Services
         private readonly string _secret;
         private readonly string _issuer;
 
-        public JwtService()
+        public JwtService(IConfiguration configuration)
         {
-            // Nên lấy từ cấu hình thực tế
-            _secret = "my_super_secret_jwt_key_2025";
-            _issuer = "WebsiteQLNhaTro";
+            // Lấy key và issuer từ cấu hình
+            _secret = configuration["Jwt:Key"];
+            _issuer = configuration["Jwt:Issuer"];
         }
 
-        public string GenerateToken(User user)
+        public string GenerateToken(UserDetailDTO user)
         {
             var claims = new[]
             {
@@ -35,6 +35,14 @@ namespace WebsiteQLNhaTro.Services
                 signingCredentials: creds
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        // get time token expires
+        public DateTime GetTokenExpiry(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            return jwtToken.ValidTo;
         }
     }
 }

@@ -1,0 +1,135 @@
+@startuml
+' Sơ đồ mối quan hệ các bảng hệ thống quản lý nhà trọ
+
+entity "USERS" as users {
+  *id : BIGINT <<PK>>
+  name : VARCHAR(100)
+  email : VARCHAR(256)
+}
+
+entity "APARTMENTS" as apartments {
+  *id : BIGINT <<PK>>
+  user_id : BIGINT <<FK>>
+  name : VARCHAR(45)
+  province_id : VARCHAR(256)
+  district_id : VARCHAR(256)
+  ward_id : VARCHAR(256)
+  address : VARCHAR(256)
+}
+
+entity "APARTMENT_ROOMS" as apartment_rooms {
+  *id : BIGINT <<PK>>
+  apartment_id : BIGINT <<FK>>
+  room_number : VARCHAR(45)
+  default_price : DECIMAL(18,2)
+  max_tenant : BIGINT
+}
+
+entity "TENANTS" as tenants {
+  *id : BIGINT <<PK>>
+  name : VARCHAR(45)
+  tel : VARCHAR(45)
+  identity_card_number : VARCHAR(45)
+  email : VARCHAR(256)
+}
+
+entity "TENANT_CONTRACTS" as tenant_contracts {
+  *id : BIGINT <<PK>>
+  apartment_room_id : BIGINT <<FK>>
+  tenant_id : BIGINT <<FK>>
+  pay_period : BIGINT
+  price : DECIMAL(18,2)
+  electricity_pay_type : BIGINT
+  electricity_price : DECIMAL(18,2)
+  electricity_num_start : BIGINT
+  water_pay_type : BIGINT
+  water_price : DECIMAL(18,2)
+  water_number_start : BIGINT
+  number_of_tenant_current : BIGINT
+  start_date : DATETIME
+  end_date : DATETIME
+}
+
+entity "ROOM_FEE_COLLECTIONS" as room_fee_collections {
+  *id : BIGINT <<PK>>
+  tenant_contract_id : BIGINT <<FK>>
+  apartment_room_id : BIGINT <<FK>>
+  tenant_id : BIGINT <<FK>>
+  electricity_number_before : BIGINT
+  electricity_number_after : BIGINT
+  water_number_before : BIGINT
+  water_number_after : BIGINT
+  charge_date : DATETIME
+  total_debt : DECIMAL(18,2)
+  total_price : DECIMAL(18,2)
+  total_paid : DECIMAL(18,2)
+  fee_collection_uuid : VARCHAR(64)
+}
+
+entity "ROOM_FEE_COLLECTION_HISTORIES" as room_fee_collection_histories {
+  *id : BIGINT <<PK>>
+  room_fee_collection_id : BIGINT <<FK>>
+  paid_date : DATETIME
+  price : DECIMAL(18,2)
+}
+
+entity "WATER_USAGES" as water_usages {
+  *id : BIGINT <<PK>>
+  apartment_room_id : BIGINT <<FK>>
+  usage_number : BIGINT
+  input_date : DATETIME
+}
+
+entity "ELECTRICITY_USAGES" as electricity_usages {
+  *id : BIGINT <<PK>>
+  apartment_room_id : BIGINT <<FK>>
+  usage_number : BIGINT
+  input_date : DATETIME
+}
+
+entity "CONTRACT_MONTHLY_COSTS" as contract_monthly_costs {
+  *id : BIGINT <<PK>>
+  tenant_contract_id : BIGINT <<FK>>
+  monthly_cost_id : BIGINT <<FK>>
+  pay_type : BIGINT
+  price : DECIMAL(18,2)
+}
+
+entity "MONTHLY_COSTS" as monthly_costs {
+  *id : BIGINT <<PK>>
+  name : VARCHAR(45)
+}
+
+entity "PREFECTURES" as prefectures {
+  *id : BIGINT <<PK>>
+  ward_id : VARCHAR(256)
+  ward_name : VARCHAR(256)
+  ward_name_en : VARCHAR(256)
+  ward_level : VARCHAR(256)
+  district_id : VARCHAR(256)
+  district_name : VARCHAR(256)
+  province_id : VARCHAR(256)
+  province_name : VARCHAR(256)
+}
+
+entity "ADMINS" as admins {
+  *id : BIGINT <<PK>>
+  admin_uuid : VARCHAR(64)
+  admin_login_id : VARCHAR(64)
+  name : VARCHAR(45)
+  email : VARCHAR(256)
+}
+
+users ||--o{ apartments : owns
+apartments ||--o{ apartment_rooms : has
+apartment_rooms ||--o{ tenant_contracts : contracts
+tenants ||--o{ tenant_contracts : signs
+tenant_contracts ||--o{ room_fee_collections : collects
+room_fee_collections ||--o{ room_fee_collection_histories : history
+apartment_rooms ||--o{ water_usages : water
+apartment_rooms ||--o{ electricity_usages : electricity
+tenant_contracts ||--o{ contract_monthly_costs : costs
+contract_monthly_costs ||--o{ monthly_costs : type
+apartments ||--o{ prefectures : located
+admins ||--o{ apartments : manages
+@enduml
