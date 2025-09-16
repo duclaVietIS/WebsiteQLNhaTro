@@ -1,0 +1,31 @@
+# Visual Studio
+.vs/
+# Build results
+bin/
+obj/
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+# NuGet Packages
+*.nupkg
+# Logs
+*.log
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+# Others
+*.DS_Store
+*.idea/
+*.vscode/
+# Publish output
+publish/
+# Sensitive files
+appsettings.*.json
+# Node modules
+node_modules/
