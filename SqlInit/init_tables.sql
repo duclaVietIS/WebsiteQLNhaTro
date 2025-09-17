@@ -59,23 +59,26 @@ CREATE TABLE tenant_contracts (
     FOREIGN KEY (tenant_id) REFERENCES tenants(id)
 );
 
-CREATE TABLE room_fee_collections (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    tenant_contract_id BIGINT,
-    apartment_room_id BIGINT,
-    tenant_id BIGINT,
+CREATE TABLE room_fee_collections
+(
+    id                        BIGINT PRIMARY KEY AUTO_INCREMENT,
+    tenant_contract_id        BIGINT,
+    apartment_room_id         BIGINT,
+    tenant_id                 BIGINT,
     electricity_number_before BIGINT,
-    electricity_number_after BIGINT,
-    water_number_before BIGINT,
-    water_number_after BIGINT,
-    charge_date DATETIME,
-    total_debt DECIMAL(18,2),
-    total_price DECIMAL(18,2),
-    total_paid DECIMAL(18,2),
-    fee_collection_uuid VARCHAR(64),
-    FOREIGN KEY (tenant_contract_id) REFERENCES tenant_contracts(id),
-    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms(id),
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+    electricity_number_after  BIGINT,
+    image_electric_path       VARCHAR(1024),
+    water_number_before       BIGINT,
+    water_number_after        BIGINT,
+    image_water_path          VARCHAR(1024),
+    charge_date               DATETIME,
+    total_debt                DECIMAL(18, 2),
+    total_price               DECIMAL(18, 2),
+    total_paid                DECIMAL(18, 2),
+    fee_collection_uuid       VARCHAR(64),
+    FOREIGN KEY (tenant_contract_id) REFERENCES tenant_contracts (id),
+    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms (id),
+    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
 );
 
 CREATE TABLE room_fee_collection_histories (

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebsiteQLNhaTro.Entities
 {
@@ -46,5 +46,11 @@ namespace WebsiteQLNhaTro.Entities
 
         [MaxLength(64)]
         public string FeeCollectionUuid { get; set; }
+
+        [MaxLength(256)]
+        public string? ImageElectricPath { get; set; }
+
+        [MaxLength(256)]
+        public string? ImageWaterPath { get; set; }
     }
 }

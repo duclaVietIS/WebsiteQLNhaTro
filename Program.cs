@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.JwtService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.UserService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentService>();
-
+builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentRoomService>();
 
 // Register AppDbContext with MySQL
 builder.Services.AddDbContext<WebsiteQLNhaTro.Entities.AppDbContext>(options =>

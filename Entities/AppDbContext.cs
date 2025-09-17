@@ -73,7 +73,8 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.IdentityCardNumber).HasColumnName("identity_card_number");
                 entity.Property(e => e.Email).HasColumnName("email");
             });
-            modelBuilder.Entity<TenantContract>(entity => {
+            modelBuilder.Entity<TenantContract>(entity =>
+            {
                 entity.ToTable("tenant_contracts");
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.ApartmentRoomId).HasColumnName("apartment_room_id");
@@ -85,8 +86,13 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.ElectricityNumStart).HasColumnName("electricity_num_start");
                 entity.Property(e => e.WaterPayType).HasColumnName("water_pay_type");
                 entity.Property(e => e.WaterPrice).HasColumnName("water_price");
+                entity.Property(e => e.WaterNumberStart).HasColumnName("water_number_start");
+                entity.Property(e => e.StartDate).HasColumnName("start_date");
+                entity.Property(e => e.EndDate).HasColumnName("end_date");
+                entity.Property(e => e.NumberOfTenantCurrent).HasColumnName("number_of_tenant_current");
             });
-            modelBuilder.Entity<RoomFeeCollection>(entity => {
+            modelBuilder.Entity<RoomFeeCollection>(entity =>
+            {
                 entity.ToTable("room_fee_collections");
                 entity.Property(e => e.Id).HasColumnName("id");
                 entity.Property(e => e.TenantContractId).HasColumnName("tenant_contract_id");
@@ -98,6 +104,8 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.WaterNumberAfter).HasColumnName("water_number_after");
                 entity.Property(e => e.ChargeDate).HasColumnName("charge_date");
                 entity.Property(e => e.TotalDebt).HasColumnName("total_debt");
+                entity.Property(e => e.ImageElectricPath).HasColumnName("image_electric_path");
+                entity.Property(e => e.ImageWaterPath).HasColumnName("image_water_path");
             });
             modelBuilder.Entity<RoomFeeCollectionHistory>(entity => {
                 entity.ToTable("room_fee_collection_histories");

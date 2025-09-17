@@ -57,8 +57,6 @@ WebsiteQLNhaTro/
 - [Swagger](https://swagger.io/)
 
 ---
-## 👤 Tác giả
-- duclaVietIS
 Yêu cầu: Xây dựng website quản lý nhà trọ với các chức năng:				
 Cơ bản				
 	1. Đăng ký, xác thực tài khoản qua email, quên mật khẩu			
