@@ -83,20 +83,22 @@ namespace WebsiteQLNhaTro.Services
                 await imageWater.CopyToAsync(stream);
                 imageWaterPath = $"/images/meters/{fileName}";
             }
-            
+
             var fee = new RoomFeeCollection
             {
                 ApartmentRoomId = dto.ApartmentRoomId,
                 ChargeDate = dto.ChargeDate,
                 ElectricityNumberBefore = dto.ElectricityNumberBefore,
-                ElectricityNumberAfter = dto.ElectricityNumberAfter,
-                WaterNumberBefore = dto.WaterNumberBefore,
-                WaterNumberAfter = dto.WaterNumberAfter,
                 TotalDebt = dto.TotalDebt,
                 TotalPrice = dto.TotalPrice,
-                TotalPaid = dto.TotalPaid,
                 ImageElectricPath = imageElectricPath,
-                ImageWaterPath = imageWaterPath
+                ImageWaterPath = imageWaterPath,
+                TenantContractId = dto.TenantContractId,
+                TenantId = dto.TenantId,
+                WaterNumberBefore = dto.WaterNumberBefore,
+                WaterNumberAfter = dto.WaterNumberAfter,
+                ElectricityNumberAfter = dto.ElectricityNumberAfter,
+                TotalPaid = dto.TotalPaid
             };
             _db.RoomFeeCollections.Add(fee);
             await _db.SaveChangesAsync();
@@ -137,15 +139,15 @@ namespace WebsiteQLNhaTro.Services
         /// <summary>
         /// Save image file and return filestream
         /// </summary>
-        /// <param name="imageWater"></param>
+        /// <param name="image"></param>
         /// <param name="fileName"></param>
         /// <returns></returns>
-        private async Task<FileStream> saveImage(IFormFile imageWater, string fileName)
+        private async Task<FileStream> saveImage(IFormFile image, string fileName)
         {
             var savePath = Path.Combine(_env.WebRootPath, "images", "meters", fileName);
             Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
             var stream = new FileStream(savePath, FileMode.Create);
-            await imageWater.CopyToAsync(stream);
+            await image.CopyToAsync(stream);
             return stream;
         }
 
@@ -154,8 +156,33 @@ namespace WebsiteQLNhaTro.Services
             var fee = await _db.RoomFeeCollections.FindAsync(id);
             if (fee == null)
                 throw new Exception("Cannot find fee information");
+
+            // Optionally, delete associated image files
+            DeleteImageFile(fee.ImageElectricPath);
+            DeleteImageFile(fee.ImageWaterPath);
+
+            // Delete the historie fees associated with this fee
+            var histories = _db.RoomFeeCollectionHistories.Where(h => h.RoomFeeCollectionId == id);
+            _db.RoomFeeCollectionHistories.RemoveRange(histories);
+
+            // Delete the fee record
             _db.RoomFeeCollections.Remove(fee);
             await _db.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Delete image file by its relative path
+        /// </summary>
+        /// <param name="relativePath"></param>
+        /// <returns></returns>
+        private void DeleteImageFile(string relativePath)
+        {
+            if (string.IsNullOrEmpty(relativePath)) return;
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+            if (File.Exists(fullPath))
+            {
+                File.Delete(fullPath);
+            }
         }
     }
 }

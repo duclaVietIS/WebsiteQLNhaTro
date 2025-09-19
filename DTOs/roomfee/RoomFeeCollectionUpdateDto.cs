@@ -23,12 +23,12 @@ namespace WebsiteQLNhaTro.DTOs.roomfee
         public long WaterNumberAfter { get; set; }
 
         [Required]
-        public decimal TotalDebt { get; set; }
+        public decimal? TotalDebt { get; set; }
 
         [Required]
-        public decimal TotalPrice { get; set; }
+        public decimal? TotalPrice { get; set; }
 
         [Required]
-        public decimal TotalPaid { get; set; }
+        public decimal? TotalPaid { get; set; }
     }
 }

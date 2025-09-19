@@ -104,6 +104,8 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.WaterNumberAfter).HasColumnName("water_number_after");
                 entity.Property(e => e.ChargeDate).HasColumnName("charge_date");
                 entity.Property(e => e.TotalDebt).HasColumnName("total_debt");
+                entity.Property(e => e.TotalPrice).HasColumnName("total_price");
+                entity.Property(e => e.TotalPaid).HasColumnName("total_paid");
                 entity.Property(e => e.ImageElectricPath).HasColumnName("image_electric_path");
                 entity.Property(e => e.ImageWaterPath).HasColumnName("image_water_path");
             });

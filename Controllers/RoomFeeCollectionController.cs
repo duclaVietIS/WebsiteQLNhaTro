@@ -5,7 +5,7 @@ using WebsiteQLNhaTro.Services;
 namespace WebsiteQLNhaTro.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/room-fee-collection")]
     public class RoomFeeCollectionController : ControllerBase
     {
         private readonly RoomFeeCollectionService _service;
@@ -38,9 +38,10 @@ namespace WebsiteQLNhaTro.Controllers
             try
             {
                 // Validate required fields
-                if (dto.ElectricityNumberAfter == null || dto.WaterNumberAfter == null || dto.TotalPaid == null)
-                    return BadRequest("Number of electricity, number of water, and total paid are required");
-
+                if(ModelState.IsValid == false)
+                {
+                    return BadRequest(ModelState);
+                }
                 IFormFile? imageElectric = Request.Form.Files["imageElectric"];
                 IFormFile? imageWater = Request.Form.Files["imageWater"];
                 var id = _service.CreateFee(dto, imageElectric, imageWater).Result;
@@ -48,7 +49,7 @@ namespace WebsiteQLNhaTro.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex);
             }
         }
 
@@ -74,7 +75,7 @@ namespace WebsiteQLNhaTro.Controllers
         public IActionResult DeleteFee(long id)
         {
             _service.DeleteFee(id).Wait();
-            return Ok();
+            return Ok("Delete successful. " + id);
         }
     }
 }

@@ -1,141 +1,211 @@
--- Create database motel_db
-CREATE DATABASE motel_db;
-USE motel_db;
-
--- Script tạo các bảng cho hệ thống quản lý nhà trọ
-CREATE TABLE users (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    email VARCHAR(256),
-    password_hash VARCHAR(256) NOT NULL,
-    role VARCHAR(32) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE
-);
-
-CREATE TABLE apartments (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id BIGINT,
-    name VARCHAR(45),
-    province_id VARCHAR(256),
-    district_id VARCHAR(256),
-    ward_id VARCHAR(256),
-    address VARCHAR(256),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE apartment_rooms (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    apartment_id BIGINT,
-    room_number VARCHAR(45),
-    default_price BIGINT,
-    max_tenant BIGINT,
-    FOREIGN KEY (apartment_id) REFERENCES apartments(id)
-);
-
-CREATE TABLE tenants (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(45),
-    tel VARCHAR(45),
-    identity_card_number VARCHAR(45),
-    email VARCHAR(256)
-);
-
-CREATE TABLE tenant_contracts (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    apartment_room_id BIGINT,
-    tenant_id BIGINT,
-    pay_period BIGINT,
-    price DECIMAL(18,2),
-    electricity_pay_type BIGINT,
-    electricity_price DECIMAL(18,2),
-    electricity_num_start BIGINT,
-    water_pay_type BIGINT,
-    water_price DECIMAL(18,2),
-    water_number_start BIGINT,
-    number_of_tenant_current BIGINT,
-    start_date DATETIME,
-    end_date DATETIME,
-    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms(id),
-    FOREIGN KEY (tenant_id) REFERENCES tenants(id)
-);
-
-CREATE TABLE room_fee_collections
+create table admins
 (
-    id                        BIGINT PRIMARY KEY AUTO_INCREMENT,
-    tenant_contract_id        BIGINT,
-    apartment_room_id         BIGINT,
-    tenant_id                 BIGINT,
-    electricity_number_before BIGINT,
-    electricity_number_after  BIGINT,
-    image_electric_path       VARCHAR(1024),
-    water_number_before       BIGINT,
-    water_number_after        BIGINT,
-    image_water_path          VARCHAR(1024),
-    charge_date               DATETIME,
-    total_debt                DECIMAL(18, 2),
-    total_price               DECIMAL(18, 2),
-    total_paid                DECIMAL(18, 2),
-    fee_collection_uuid       VARCHAR(64),
-    FOREIGN KEY (tenant_contract_id) REFERENCES tenant_contracts (id),
-    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms (id),
-    FOREIGN KEY (tenant_id) REFERENCES tenants (id)
+    id             bigint auto_increment
+        primary key,
+    admin_uuid     varchar(64)  null,
+    admin_login_id varchar(64)  null,
+    name           varchar(45)  null,
+    email          varchar(256) null
 );
 
-CREATE TABLE room_fee_collection_histories (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    room_fee_collection_id BIGINT,
-    paid_date DATETIME,
-    price DECIMAL(18,2),
-    FOREIGN KEY (room_fee_collection_id) REFERENCES room_fee_collections(id)
+create table monthly_costs
+(
+    id   bigint auto_increment
+        primary key,
+    name varchar(45) null
 );
 
-CREATE TABLE water_usages (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    apartment_room_id BIGINT,
-    usage_number BIGINT,
-    input_date DATETIME,
-    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms(id)
+create table prefectures
+(
+    id            bigint auto_increment
+        primary key,
+    ward_id       varchar(256) null,
+    ward_name     varchar(256) null,
+    ward_name_en  varchar(256) null,
+    ward_level    varchar(256) null,
+    district_id   varchar(256) null,
+    district_name varchar(256) null,
+    province_id   varchar(256) null,
+    province_name varchar(256) null
 );
 
-CREATE TABLE electricity_usages (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    apartment_room_id BIGINT,
-    usage_number BIGINT,
-    input_date DATETIME,
-    FOREIGN KEY (apartment_room_id) REFERENCES apartment_rooms(id)
+create table tenants
+(
+    id                   bigint auto_increment
+        primary key,
+    name                 varchar(45)  null,
+    tel                  varchar(45)  null,
+    identity_card_number varchar(45)  null,
+    email                varchar(256) null
 );
 
-CREATE TABLE contract_monthly_costs (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    tenant_contract_id BIGINT,
-    monthly_cost_id BIGINT,
-    pay_type BIGINT,
-    price DECIMAL(18,2),
-    FOREIGN KEY (tenant_contract_id) REFERENCES tenant_contracts(id),
-    FOREIGN KEY (monthly_cost_id) REFERENCES monthly_costs(id)
+create table users
+(
+    id            bigint auto_increment
+        primary key,
+    name          varchar(100)         null,
+    email         varchar(256)         null,
+    password_hash varchar(256)         not null,
+    role          varchar(32)          not null,
+    is_active     tinyint(1) default 1 null
 );
 
-CREATE TABLE monthly_costs (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(45)
+create table apartments
+(
+    id          bigint auto_increment
+        primary key,
+    user_id     bigint        null,
+    name        varchar(45)   null,
+    province_id varchar(256)  null,
+    district_id varchar(256)  null,
+    ward_id     varchar(256)  null,
+    address     varchar(256)  null,
+    image_path  varchar(1024) null,
+    constraint apartments_ibfk_1
+        foreign key (user_id) references users (id)
 );
 
-CREATE TABLE prefectures (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    ward_id VARCHAR(256),
-    ward_name VARCHAR(256),
-    ward_name_en VARCHAR(256),
-    ward_level VARCHAR(256),
-    district_id VARCHAR(256),
-    district_name VARCHAR(256),
-    province_id VARCHAR(256),
-    province_name VARCHAR(256)
+create table apartment_rooms
+(
+    id            bigint auto_increment
+        primary key,
+    apartment_id  bigint                      null,
+    room_number   varchar(45)                 null,
+    default_price decimal(18, 2) default 0.00 null,
+    max_tenant    bigint                      null,
+    constraint apartment_rooms_ibfk_1
+        foreign key (apartment_id) references apartments (id)
 );
 
-CREATE TABLE admins (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    admin_uuid VARCHAR(64),
-    admin_login_id VARCHAR(64),
-    name VARCHAR(45),
-    email VARCHAR(256)
+create index apartment_id
+    on apartment_rooms (apartment_id);
+
+create index user_id
+    on apartments (user_id);
+
+create table electricity_usages
+(
+    id                bigint auto_increment
+        primary key,
+    apartment_room_id bigint   null,
+    usage_number      bigint   null,
+    input_date        datetime null,
+    constraint electricity_usages_ibfk_1
+        foreign key (apartment_room_id) references apartment_rooms (id)
 );
+
+create index apartment_room_id
+    on electricity_usages (apartment_room_id);
+
+create table tenant_contracts
+(
+    id                       bigint auto_increment
+        primary key,
+    apartment_room_id        bigint         null,
+    tenant_id                bigint         null,
+    pay_period               bigint         null,
+    price                    decimal(18, 2) null,
+    electricity_pay_type     bigint         null,
+    electricity_price        decimal(18, 2) null,
+    electricity_num_start    bigint         null,
+    water_pay_type           bigint         null,
+    water_price              decimal(18, 2) null,
+    water_number_start       bigint         null,
+    number_of_tenant_current bigint         null,
+    start_date               datetime       null,
+    end_date                 datetime       null,
+    constraint tenant_contracts_ibfk_1
+        foreign key (apartment_room_id) references apartment_rooms (id),
+    constraint tenant_contracts_ibfk_2
+        foreign key (tenant_id) references tenants (id)
+);
+
+create table contract_monthly_costs
+(
+    id                 bigint auto_increment
+        primary key,
+    tenant_contract_id bigint         null,
+    monthly_cost_id    bigint         null,
+    pay_type           bigint         null,
+    price              decimal(18, 2) null,
+    constraint contract_monthly_costs_ibfk_1
+        foreign key (tenant_contract_id) references tenant_contracts (id),
+    constraint contract_monthly_costs_ibfk_2
+        foreign key (monthly_cost_id) references monthly_costs (id)
+);
+
+create index monthly_cost_id
+    on contract_monthly_costs (monthly_cost_id);
+
+create index tenant_contract_id
+    on contract_monthly_costs (tenant_contract_id);
+
+create table room_fee_collections
+(
+    id                        bigint auto_increment
+        primary key,
+    tenant_contract_id        bigint         null,
+    apartment_room_id         bigint         null,
+    tenant_id                 bigint         null,
+    electricity_number_before bigint         null,
+    electricity_number_after  bigint         null,
+    image_electric_path       varchar(1024)  null,
+    water_number_before       bigint         null,
+    water_number_after        bigint         null,
+    image_water_path          varchar(1024)  null,
+    charge_date               datetime       null,
+    total_debt                decimal(18, 2) null,
+    total_price               decimal(18, 2) null,
+    total_paid                decimal(18, 2) null,
+    fee_collection_uuid       varchar(64)    null,
+    constraint room_fee_collections_ibfk_1
+        foreign key (tenant_contract_id) references tenant_contracts (id),
+    constraint room_fee_collections_ibfk_2
+        foreign key (apartment_room_id) references apartment_rooms (id),
+    constraint room_fee_collections_ibfk_3
+        foreign key (tenant_id) references tenants (id)
+);
+
+create table room_fee_collection_histories
+(
+    id                     bigint auto_increment
+        primary key,
+    room_fee_collection_id bigint         null,
+    paid_date              datetime       null,
+    price                  decimal(18, 2) null,
+    constraint room_fee_collection_histories_ibfk_1
+        foreign key (room_fee_collection_id) references room_fee_collections (id)
+);
+
+create index room_fee_collection_id
+    on room_fee_collection_histories (room_fee_collection_id);
+
+create index apartment_room_id
+    on room_fee_collections (apartment_room_id);
+
+create index tenant_contract_id
+    on room_fee_collections (tenant_contract_id);
+
+create index tenant_id
+    on room_fee_collections (tenant_id);
+
+create index apartment_room_id
+    on tenant_contracts (apartment_room_id);
+
+create index tenant_id
+    on tenant_contracts (tenant_id);
+
+create table water_usages
+(
+    id                bigint auto_increment
+        primary key,
+    apartment_room_id bigint   null,
+    usage_number      bigint   null,
+    input_date        datetime null,
+    constraint water_usages_ibfk_1
+        foreign key (apartment_room_id) references apartment_rooms (id)
+);
+
+create index apartment_room_id
+    on water_usages (apartment_room_id);
+

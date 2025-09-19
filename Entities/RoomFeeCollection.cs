@@ -21,31 +21,31 @@ namespace WebsiteQLNhaTro.Entities
         public long TenantId { get; set; } // FK to Tenant
 
         [Required]
-        public long ElectricityNumberBefore { get; set; }
+        public long? ElectricityNumberBefore { get; set; }
 
         [Required]
-        public long ElectricityNumberAfter { get; set; }
+        public long? ElectricityNumberAfter { get; set; }
 
         [Required]
-        public long WaterNumberBefore { get; set; }
+        public long? WaterNumberBefore { get; set; }
 
         [Required]
-        public long WaterNumberAfter { get; set; }
+        public long? WaterNumberAfter { get; set; }
 
         [Required]
         public DateTime ChargeDate { get; set; }
 
         [Required]
-        public decimal TotalDebt { get; set; }
+        public decimal? TotalDebt { get; set; }
 
         [Required]
-        public decimal TotalPrice { get; set; }
+        public decimal? TotalPrice { get; set; }
 
         [Required]
-        public decimal TotalPaid { get; set; }
+        public decimal? TotalPaid { get; set; }
 
-        [MaxLength(64)]
-        public string FeeCollectionUuid { get; set; }
+        // [MaxLength(64)]
+        // public string FeeCollectionUuid { get; set; }
 
         [MaxLength(256)]
         public string? ImageElectricPath { get; set; }
