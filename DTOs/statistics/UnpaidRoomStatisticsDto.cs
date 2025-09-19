@@ -6,13 +6,13 @@ namespace WebsiteQLNhaTro.DTOs.statistics
     public class UnpaidRoomStatisticsDto
     {
         public long ApartmentId { get; set; }
-        public string ApartmentName { get; set; }
+        public required string ApartmentName { get; set; }
         public long RoomId { get; set; }
-        public string RoomNumber { get; set; }
+        public required string RoomNumber { get; set; }
         public long TenantId { get; set; }
-        public string TenantName { get; set; }
-        public string Tel { get; set; }
-        public string Email { get; set; }
+        public required string TenantName { get; set; }
+        public required string TenantPhone { get; set; }
+        public required string TenantEmail { get; set; }
         public DateTime ChargeDate { get; set; }
         public decimal TotalPrice { get; set; }
         public decimal? TotalPaid { get; set; }
@@ -33,6 +33,6 @@ namespace WebsiteQLNhaTro.DTOs.statistics
     {
         public int TotalUnpaidRooms { get; set; }
         public decimal TotalUnpaidAmount { get; set; }
-        public List<UnpaidRoomStatisticsDto> UnpaidRooms { get; set; }
+        public required List<UnpaidRoomStatisticsDto> UnpaidRooms { get; set; }
     }
 }

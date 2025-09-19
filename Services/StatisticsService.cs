@@ -15,24 +15,16 @@ namespace WebsiteQLNhaTro.Services
             _emailService = emailService;
         }
 
-        public async Task<UnpaidRoomStatisticsResponse> GetUnpaidRoomsStatistics()
+        /// <summary>
+        /// Get unpaid room statistics
+        /// </summary>
+        /// <param name="apartmentId">Optional apartment ID to filter results</param>
+        /// <returns>Unpaid room statistics response</returns>
+        public async Task<UnpaidRoomStatisticsResponse> GetUnpaidRoomsStatistics(long? apartmentId = null)
         {
-            var unpaidRooms = await _context.UnpaidRoomStatistics
-                .Select(v => new UnpaidRoomStatisticsDto
-                {
-                    RoomId = v.RoomId,
-                    RoomNumber = v.RoomNumber,
-                    TenantId = v.TenantId,
-                    TenantName = v.TenantName,
-                    Tel = v.TenantPhone,
-                    Email = v.TenantEmail,
-                    ChargeDate = v.ChargeDate,
-                    TotalPrice = v.TotalPrice,
-                    TotalPaid = v.TotalPaid,
-                    RemainingDebt = v.TotalPrice - (v.TotalPaid ?? 0),
-                    ElectricityUsed = v.ElectricityNumberAfter - v.ElectricityNumberBefore,
-                    WaterUsed = v.WaterNumberAfter - v.WaterNumberBefore
-                })
+            // Call the stored procedure to get unpaid room statistics
+            var unpaidRooms = await _context.Database
+                .SqlQuery<UnpaidRoomStatisticsDto>($"CALL sp_get_unpaid_room_statistics({(apartmentId.HasValue ? apartmentId.Value.ToString() : "NULL")});")
                 .ToListAsync();
 
             return new UnpaidRoomStatisticsResponse
@@ -43,9 +35,10 @@ namespace WebsiteQLNhaTro.Services
             };
         }
 
-        public async Task SendUnpaidNotifications()
+        // TODO : implement sending email notifications to tenants with unpaid rooms
+        public async Task SendUnpaidNotifications(long? apartmentId = null)
         {
-            var statistics = await GetUnpaidRoomsStatistics();
+            var statistics = await GetUnpaidRoomsStatistics(apartmentId);
 
             foreach (var room in statistics.UnpaidRooms)
             {

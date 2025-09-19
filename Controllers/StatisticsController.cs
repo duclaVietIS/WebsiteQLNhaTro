@@ -15,11 +15,16 @@ namespace WebsiteQLNhaTro.Controllers
         }
 
         [HttpGet("unpaid-rooms")]
-        public async Task<IActionResult> GetUnpaidRoomsStatistics()
+        public async Task<IActionResult> GetUnpaidRoomsStatistics([FromQuery] long? apartmentId = null)
         {
             try
             {
-                var statistics = await _statisticsService.GetUnpaidRoomsStatistics();
+                // check null apartmentId
+                if (apartmentId == null)
+                {
+                    return BadRequest("ApartmentId is required.");
+                }
+                var statistics = await _statisticsService.GetUnpaidRoomsStatistics(apartmentId);
                 return Ok(statistics);
             }
             catch (Exception ex)
