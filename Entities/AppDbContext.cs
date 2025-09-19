@@ -23,6 +23,7 @@ namespace WebsiteQLNhaTro.Entities
         public DbSet<ContractMonthlyCost> ContractMonthlyCosts { get; set; }
         public DbSet<MonthlyCost> MonthlyCosts { get; set; }
         public DbSet<Prefecture> Prefectures { get; set; }
+        public DbSet<UnpaidRoomStatisticsView> UnpaidRoomStatistics { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -154,6 +155,11 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.DistrictName).HasColumnName("district_name");
                 entity.Property(e => e.ProvinceId).HasColumnName("province_id");
                 entity.Property(e => e.ProvinceName).HasColumnName("province_name");
+            });
+            modelBuilder.Entity<UnpaidRoomStatisticsView>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView("vw_unpaid_room_statistics");
             });
             base.OnModelCreating(modelBuilder);
         }

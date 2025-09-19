@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using WebsiteQLNhaTro.Models;
+using WebsiteQLNhaTro.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -11,6 +13,14 @@ builder.Services.AddScoped<WebsiteQLNhaTro.Services.UserService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentRoomService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.RoomFeeCollectionService>();
+// Add services to DI container
+builder.Services.AddScoped<WebsiteQLNhaTro.Services.EmailService>();
+builder.Services.AddScoped<WebsiteQLNhaTro.Services.StatisticsService>();
+builder.Services.AddHostedService<WebsiteQLNhaTro.Services.UnpaidNotificationBackgroundService>();
+
+// Configure and register SMTP settings
+var smtpSettings = builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 // Register AppDbContext with MySQL
 builder.Services.AddDbContext<WebsiteQLNhaTro.Entities.AppDbContext>(options =>
