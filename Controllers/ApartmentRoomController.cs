@@ -16,15 +16,18 @@ namespace WebsiteQLNhaTro.Controllers
             _service = service;
         }
 
-        // GET: api/ApartmentRoom?apartmentId=1&page=1&pageSize=10&search=101
+        // GET: api/apartment-room?apartmentId=1&page=1&pageSize=10&search=101
         [HttpGet]
-        public IActionResult GetRooms([FromQuery] long apartmentId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
+        public IActionResult GetRooms([FromQuery] long apartmentId,
+                                      [FromQuery] int page = 1,
+                                      [FromQuery] int pageSize = 10,
+                                      [FromQuery] string? search = null)
         {
             (List<ApartmentRoomResponseDto> rooms, int total) = _service.GetRooms(apartmentId, page, pageSize, search).Result;
             return Ok(new { rooms, total });
         }
 
-        // GET: api/ApartmentRoom/{id}
+        // GET: api/apartment-room/{id}
         [HttpGet("{id}")]
         public IActionResult GetRoom(long id)
         {
@@ -33,7 +36,7 @@ namespace WebsiteQLNhaTro.Controllers
             return Ok(room);
         }
 
-        // POST: api/ApartmentRoom
+        // POST: api/apartment-room
         [HttpPost]
         public IActionResult CreateRoom([FromBody] ApartmentRoomCreateDto dto)
         {
@@ -41,7 +44,7 @@ namespace WebsiteQLNhaTro.Controllers
             return Ok(new { id });
         }
 
-        // PUT: api/ApartmentRoom/{id}
+        // PUT: api/apartment-room/{id}
         [HttpPut("{id}")]
         public IActionResult UpdateRoom(long id, [FromBody] ApartmentRoomUpdateDto dto)
         {
@@ -56,7 +59,7 @@ namespace WebsiteQLNhaTro.Controllers
             return Ok("Update successful.");
         }
 
-        // DELETE: api/ApartmentRoom/{id}
+        // DELETE: api/apartment-room/{id}
         [HttpDelete("{id}")]
         public IActionResult DeleteRoom(long id)
         {
@@ -64,7 +67,7 @@ namespace WebsiteQLNhaTro.Controllers
             return Ok();
         }
 
-        // PUT: api/ApartmentRoom/{id}/tenant
+        // PUT: api/apartment-room/{id}/tenant
         [HttpPut("{id}/tenant")]
         public IActionResult UpdateTenant(long id, [FromBody] TenantInfoDto tenant)
         {

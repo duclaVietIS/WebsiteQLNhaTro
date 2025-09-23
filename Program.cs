@@ -1,13 +1,43 @@
 using Microsoft.EntityFrameworkCore;
 using WebsiteQLNhaTro.Models;
 using WebsiteQLNhaTro.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add default authorization policy requiring authentication for all endpoints
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
 builder.Services.AddControllersWithViews();
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer not configured"),
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt:Audience not configured"),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("Jwt:Key not configured")))
+        };
+    });
+
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.JwtService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.UserService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentService>();
@@ -58,8 +88,14 @@ if (app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection(); // Disabled to run only HTTP
-app.UseStaticFiles();
 app.UseRouting();
+
+// Thêm middleware authentication và authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Static files không yêu cầu xác thực
+app.UseStaticFiles();
 
 app.MapControllerRoute(
     name: "default",

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using WebsiteQLNhaTro.Models;
 using WebsiteQLNhaTro.Services;
 using WebsiteQLNhaTro.DTOs;
@@ -8,6 +9,7 @@ namespace WebsiteQLNhaTro.Controllers
     // AuthController: Xử lý đăng nhập, trả về JWT token
     [ApiController]
     [Route("api/[controller]")]
+    [AllowAnonymous] // Cho phép truy cập không cần xác thực
     public class AuthController : ControllerBase
     {
         // JwtService: Service tạo và xác thực JWT token
