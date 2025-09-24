@@ -209,3 +209,16 @@ create table water_usages
 create index apartment_room_id
     on water_usages (apartment_room_id);
 
+-- action logs table
+create table if not exists action_logs
+(
+    id           bigint auto_increment primary key,
+    action       varchar(128)   not null,
+    description  text           null,
+    user_id      bigint         null,
+    apartment_id bigint         null,
+    room_id      bigint         null,
+    success      tinyint(1)     not null default 1,
+    created_at   datetime       not null
+);
+

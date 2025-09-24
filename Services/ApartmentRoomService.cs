@@ -6,12 +6,14 @@ namespace WebsiteQLNhaTro.Services
 {
     public class ApartmentRoomService
     {
-        private readonly AppDbContext _db; 
+    private readonly AppDbContext _db; 
+    private readonly ActionLogService _logService;
         private readonly IWebHostEnvironment _env;
-        public ApartmentRoomService(AppDbContext db, IWebHostEnvironment env)
+        public ApartmentRoomService(AppDbContext db, IWebHostEnvironment env, ActionLogService logService)
         {
             _db = db;
             _env = env;
+            _logService = logService;
         }
 
         public async Task<(List<ApartmentRoomResponseDto>, int)> GetRooms(long apartmentId, int page, int pageSize, string? search)
@@ -78,6 +80,9 @@ namespace WebsiteQLNhaTro.Services
             };
             _db.ApartmentRooms.Add(room);
             await _db.SaveChangesAsync();
+
+            // Log action
+            await _logService.LogRoomCreated(room.Id, room.ApartmentId, room.RoomNumber);
             return room.Id;
         }
 

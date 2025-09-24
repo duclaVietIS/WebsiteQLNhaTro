@@ -24,7 +24,7 @@ namespace WebsiteQLNhaTro.Entities
         public DbSet<MonthlyCost> MonthlyCosts { get; set; }
         public DbSet<Prefecture> Prefectures { get; set; }
         public DbSet<UnpaidRoomStatisticsView> UnpaidRoomStatistics { get; set; }
-
+        public DbSet<ActionLog> ActionLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -155,6 +155,18 @@ namespace WebsiteQLNhaTro.Entities
                 entity.Property(e => e.DistrictName).HasColumnName("district_name");
                 entity.Property(e => e.ProvinceId).HasColumnName("province_id");
                 entity.Property(e => e.ProvinceName).HasColumnName("province_name");
+            });
+            modelBuilder.Entity<ActionLog>(entity =>
+            {
+                entity.ToTable("action_logs");
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Action).HasColumnName("action");
+                entity.Property(e => e.Description).HasColumnName("description");
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+                entity.Property(e => e.ApartmentId).HasColumnName("apartment_id");
+                entity.Property(e => e.RoomId).HasColumnName("room_id");
+                entity.Property(e => e.Success).HasColumnName("success");
+                entity.Property(e => e.CreatedAt).HasColumnName("created_at");
             });
             modelBuilder.Entity<UnpaidRoomStatisticsView>(entity =>
             {

@@ -38,13 +38,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// Add services to DI container
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.JwtService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.UserService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.ApartmentRoomService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.RoomFeeCollectionService>();
-// Add services to DI container
-builder.Services.AddScoped<WebsiteQLNhaTro.Services.EmailService>();
+builder.Services.AddScoped<WebsiteQLNhaTro.Services.ActionLogService>();
 builder.Services.AddScoped<WebsiteQLNhaTro.Services.StatisticsService>();
 builder.Services.AddHostedService<WebsiteQLNhaTro.Services.UnpaidNotificationBackgroundService>();
 

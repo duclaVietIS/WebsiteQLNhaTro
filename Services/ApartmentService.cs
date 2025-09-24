@@ -6,12 +6,14 @@ namespace WebsiteQLNhaTro.Services
 {
     public class ApartmentService
     {
-        private readonly AppDbContext _context;
+    private readonly AppDbContext _context;
+    private readonly ActionLogService _logService;
         private readonly string _imageFolder = "wwwroot/images/apartments";
 
-        public ApartmentService(AppDbContext context)
+        public ApartmentService(AppDbContext context, ActionLogService logService)
         {
             _context = context;
+            _logService = logService;
         }
 
         public IEnumerable<ApartmentResponseDto> GetPagedList(int page, int pageSize, string? search)
@@ -57,6 +59,9 @@ namespace WebsiteQLNhaTro.Services
             };
             _context.Apartments.Add(apartment);
             _context.SaveChanges();
+
+            // Log action
+            _ = _logService.LogApartmentCreated(apartment.Id, apartment.Name);
             return new ApartmentResponseDto
             {
                 Id = apartment.Id,

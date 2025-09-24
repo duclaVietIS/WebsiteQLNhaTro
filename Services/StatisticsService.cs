@@ -8,11 +8,13 @@ namespace WebsiteQLNhaTro.Services
     {
         private readonly AppDbContext _context;
         private readonly EmailService _emailService;
+        private readonly ActionLogService _logService;
 
-        public StatisticsService(AppDbContext context, EmailService emailService)
+        public StatisticsService(AppDbContext context, EmailService emailService, ActionLogService logService)
         {
             _context = context;
             _emailService = emailService;
+            _logService = logService;
         }
 
         /// <summary>
@@ -50,6 +52,9 @@ namespace WebsiteQLNhaTro.Services
                     await _emailService.SendUnpaidRoomNotification(tenant.Email, room);
                 }
             }
+
+            // Log the notification run summary
+            await _logService.LogUnpaidNotificationRun(statistics.TotalUnpaidRooms, statistics.TotalUnpaidAmount, apartmentId);
         }
     }
 }

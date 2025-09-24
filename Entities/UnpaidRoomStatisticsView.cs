@@ -18,13 +18,10 @@ namespace WebsiteQLNhaTro.Entities
         public decimal RemainingDebt { get; set; }
         public long ElectricityUsed { get; set; }
         public long WaterUsed { get; set; }
-
         public long ElectricityNumberBefore { get; set; }
         public long ElectricityNumberAfter { get; set; }
         public long WaterNumberBefore { get; set; }
-        public long WaterNumberAfter
-        {
-            get; set;
-        }
+        public long WaterNumberAfter { get; set; }
+
     }
 }
