@@ -78,6 +78,7 @@ namespace WebsiteQLNhaTro.Services
                 return null;
             return new Models.UserDetailDTO
             {
+                Id = user.Id,
                 Username = user.Name,
                 Role = user.Role
             };

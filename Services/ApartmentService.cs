@@ -1,13 +1,16 @@
 using WebsiteQLNhaTro.DTOs;
 using WebsiteQLNhaTro.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace WebsiteQLNhaTro.Services
 {
     public class ApartmentService
     {
-    private readonly AppDbContext _context;
-    private readonly ActionLogService _logService;
+        private readonly AppDbContext _context;
+
+        private readonly ActionLogService _logService;
+
         private readonly string _imageFolder = "wwwroot/images/apartments";
 
         public ApartmentService(AppDbContext context, ActionLogService logService)
@@ -33,42 +36,67 @@ namespace WebsiteQLNhaTro.Services
             });
         }
 
-        public ApartmentResponseDto Create(ApartmentCreateDto dto)
+        public async Task<ApartmentResponseDto> Create(ApartmentCreateDto dto, long userId)
         {
             if (string.IsNullOrWhiteSpace(dto.Name) || string.IsNullOrWhiteSpace(dto.Address))
                 throw new ArgumentException("Please provide both name and address.");
 
             string? imagePath = null;
-            if (dto.Image != null)
+            string? savePath = null;
+
+            //using transaction
+            using (IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync())
             {
-                var fileName = Guid.NewGuid() + Path.GetExtension(dto.Image.FileName);
-                var savePath = Path.Combine(_imageFolder, fileName);
-                Directory.CreateDirectory(_imageFolder);
-                using (var stream = new FileStream(savePath, FileMode.Create))
+
+                try
                 {
-                    dto.Image.CopyTo(stream);
+                    if (dto.Image != null)
+                    {
+                        var fileName = Guid.NewGuid() + Path.GetExtension(dto.Image.FileName);
+                        savePath = Path.Combine(_imageFolder, fileName);
+                        Directory.CreateDirectory(_imageFolder);
+                        using (var stream = new FileStream(savePath, FileMode.Create))
+                        {
+                            dto.Image.CopyTo(stream);
+                        }
+                        imagePath = $"/images/apartments/{fileName}";
+                    }
+
+                    var apartment = new Apartment
+                    {
+                        UserId = userId,
+                        Name = dto.Name,
+                        Address = dto.Address,
+                        ImagePath = imagePath
+                    };
+                    _context.Apartments.Add(apartment);
+                    await _context.SaveChangesAsync();
+
+                    // Log action
+                    await _logService.LogApartmentCreated(apartment.Id, apartment.Name, userId);
+
+                    await transaction.CommitAsync();
+                    return new ApartmentResponseDto
+                    {
+                        Id = apartment.Id,
+                        Name = apartment.Name,
+                        Address = apartment.Address,
+                        ImageUrl = apartment.ImagePath
+                    };
+
                 }
-                imagePath = $"/images/apartments/{fileName}";
+                catch (Exception)
+                {
+                    // If there is any error, rollback the transaction
+                    if (savePath != null && File.Exists(savePath))
+                    {
+                        File.Delete(savePath);
+                    }
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
 
-            var apartment = new Apartment
-            {
-                Name = dto.Name,
-                Address = dto.Address,
-                ImagePath = imagePath
-            };
-            _context.Apartments.Add(apartment);
-            _context.SaveChanges();
-
-            // Log action
-            _ = _logService.LogApartmentCreated(apartment.Id, apartment.Name);
-            return new ApartmentResponseDto
-            {
-                Id = apartment.Id,
-                Name = apartment.Name,
-                Address = apartment.Address,
-                ImageUrl = apartment.ImagePath
-            };
         }
 
         public ApartmentResponseDto Update(long id, ApartmentUpdateDto dto)

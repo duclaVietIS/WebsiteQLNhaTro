@@ -23,7 +23,8 @@ namespace WebsiteQLNhaTro.Services
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Username)
+                new Claim("user_name", user.Username),
+                new Claim("user_id", user.Id.ToString())
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using WebsiteQLNhaTro.Models;
 using WebsiteQLNhaTro.Services;
 using WebsiteQLNhaTro.DTOs;
+using System.Security.Claims;
 
 namespace WebsiteQLNhaTro.Controllers
 {
@@ -104,6 +105,7 @@ namespace WebsiteQLNhaTro.Controllers
             return Ok(new LoginResponse
             {
                 Token = token,
+                UserId = userDetail.Id,
                 Username = userDetail.Username,
                 Role = userDetail.Role,
                 ExpiresAt = _jwtService.GetTokenExpiry(token)

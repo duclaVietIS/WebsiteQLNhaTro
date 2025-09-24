@@ -11,7 +11,12 @@ namespace WebsiteQLNhaTro.Services
             _db = db;
         }
 
-        public async Task LogAsync(string action, string? description = null, long? userId = null, long? apartmentId = null, long? roomId = null, bool success = true)
+        public async Task LogAsync(string action,
+                                    string? description = null,
+                                    long? userId = null,
+                                    long? apartmentId = null,
+                                    long? roomId = null,
+                                    bool success = true)
         {
             var log = new ActionLog
             {

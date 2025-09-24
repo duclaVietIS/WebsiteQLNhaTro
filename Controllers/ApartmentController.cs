@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebsiteQLNhaTro.DTOs;
 using WebsiteQLNhaTro.Entities;
 using WebsiteQLNhaTro.Services;
+using System.Security.Claims;
 
 namespace WebsiteQLNhaTro.Controllers
 {
@@ -25,9 +26,15 @@ namespace WebsiteQLNhaTro.Controllers
 
         // POST: api/apartment
         [HttpPost]
-        public IActionResult Create([FromForm] ApartmentCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] ApartmentCreateDto dto)
         {
-            var result = _apartmentService.Create(dto);
+            // get id user from token
+            var userIdStr = User.FindFirstValue("user_id");
+            if (userIdStr == null)
+                return Unauthorized("User ID not found in token.");
+            if (!long.TryParse(userIdStr, out var userId))
+                return BadRequest("Invalid user ID in token.");
+            var result = await _apartmentService.Create(dto, userId);
             return Ok(result);
         }
 

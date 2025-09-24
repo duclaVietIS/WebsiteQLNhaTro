@@ -6,9 +6,12 @@ namespace WebsiteQLNhaTro.Services
 {
     public class ApartmentRoomService
     {
-    private readonly AppDbContext _db; 
-    private readonly ActionLogService _logService;
+        private readonly AppDbContext _db;
+
+        private readonly ActionLogService _logService;
+
         private readonly IWebHostEnvironment _env;
+
         public ApartmentRoomService(AppDbContext db, IWebHostEnvironment env, ActionLogService logService)
         {
             _db = db;
